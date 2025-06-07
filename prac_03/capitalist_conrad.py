@@ -27,7 +27,6 @@ def simulate_price(start_price, min_price, max_price, max_increase, max_decrease
 
     return prices
 
-
 def write_prices_to_file(prices, filename):
     """Write the price log to a file with formatted output."""
     with open(filename, 'w') as out_file:
