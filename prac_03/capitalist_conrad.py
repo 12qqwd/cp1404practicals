@@ -8,28 +8,39 @@ MAX_PRICE = 100.0      # Maximum valid stock price
 INITIAL_PRICE = 10.0   # Starting stock price
 FILENAME = "output.txt"
 
-price = INITIAL_PRICE
-number_of_days = 0
 
-out_file = open(FILENAME, 'w')
+def simulate_price(start_price, min_price, max_price, max_increase, max_decrease):
+    """Simulate the stock price changes and return a list of prices per day."""
+    prices = [start_price]
+    current_price = start_price
 
-# Print initial price
-print(f"Starting price: ${price:,.2f}", file=out_file)
+    while min_price <= current_price <= max_price:
+        change_direction = random.randint(0, 1)
+        if change_direction == 1:
+            price_change = random.uniform(0, max_increase)
+        else:
+            price_change = -random.uniform(0, max_decrease)
 
-# Simulation loop
-while MIN_PRICE <= price <= MAX_PRICE:
-    price_change = 0
-    number_of_days += 1
+        current_price *= (1 + price_change)
+        if min_price <= current_price <= max_price:
+            prices.append(current_price)
 
-    # Decide if the price increases or decreases
-    if random.randint(0, 1) == 1:
-        # Increase price
-        price_change = random.uniform(0, MAX_INCREASE)
-    else:
-        # Decrease price
-        price_change = -random.uniform(0, MAX_DECREASE)
+    return prices
 
-    price *= (1 + price_change)
-    print(f"On day {number_of_days} price is: ${price:,.2f}", file=out_file)
 
-out_file.close()
+def write_prices_to_file(prices, filename):
+    """Write the price log to a file with formatted output."""
+    with open(filename, 'w') as out_file:
+        print(f"Starting price: ${prices[0]:,.2f}", file=out_file)
+        for day, price in enumerate(prices[1:], start=1):
+            print(f"On day {day} price is: ${price:,.2f}", file=out_file)
+
+
+def main():
+    prices = simulate_price(INITIAL_PRICE, MIN_PRICE, MAX_PRICE, MAX_INCREASE, MAX_DECREASE)
+    write_prices_to_file(prices, FILENAME)
+
+
+if __name__ == "__main__":
+    main()
+

@@ -1,14 +1,17 @@
-# exceptions_to_complete.py
+def get_valid_integer():
+    is_valid_input = False
+    while not is_valid_input:
+        try:
+            result = int(input("Enter a valid integer: "))
+            is_valid_input = True
+        except ValueError:
+            print("Please enter a valid integer.")
+    return result
 
-# Loop until the user enters a valid integer
-is_valid_input = False
+def main():
+    result = get_valid_integer()
+    print(f"Valid result is: {result}")
 
-while not is_valid_input:
-    try:
-        result = int(input("Enter a valid integer: "))  # Try to get and convert input
-        is_valid_input = True  # If successful, exit loop
-    except ValueError:  # If input is not a valid integer
-        print("Please enter a valid integer.")  # Error message
+if __name__ == "__main__":
+    main()
 
-# Print the result after valid input is received
-print(f"Valid result is: {result}")
