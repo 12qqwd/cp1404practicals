@@ -46,3 +46,4 @@ if __name__ == "__main__":
     SPECIAL_CHARS_REQUIRED = True
     SPECIAL_CHARACTERS = "!@#$%^&*()_-=+`~,./'[]<>?{}|\\"
     main(MIN_LENGTH, MAX_LENGTH, SPECIAL_CHARS_REQUIRED, SPECIAL_CHARACTERS)
+
