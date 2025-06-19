@@ -24,6 +24,10 @@ def main():
     print()
     for email, name in email_to_name.items():
         print(f"{name} ({email})")
+def get_menu_choice():
+    """Prompt for menu choice."""
+    print("Menu:\nD - Display movies\nA - Add new movie\nW - Watch a movie\nQ - Quit")
+    return input(">>> ").strip().lower()
 
 
 if __name__ == "__main__":
