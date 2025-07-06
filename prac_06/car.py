@@ -1,6 +1,5 @@
 """CP1404 Practical - Car class example."""
 
-
 class Car:
     """Represent a Car object."""
 
