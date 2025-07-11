@@ -1,20 +1,22 @@
-"""Menu-driven project management without while True or globals."""
-
 import csv
 from datetime import datetime
 from project import Project
 
-def load_from_file(filename):
+FILENAME = "projects.txt"
+
+def load_projects(filename):
     projects = []
     with open(filename, newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter='\t')
         for row in reader:
             projects.append(Project(
-                row["Name"], row["Start Date"], row["Priority"],
-                row["Cost Estimate"], row["Completion Percentage"]))
+                row["Name"], row["Start Date"],
+                row["Priority"], row["Cost Estimate"],
+                row["Completion Percentage"]
+            ))
     return projects
 
-def save_to_file(filename, projects):
+def save_projects(filename, projects):
     with open(filename, "w", newline='', encoding='utf-8') as file:
         fieldnames = ["Name", "Start Date", "Priority", "Cost Estimate", "Completion Percentage"]
         writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter='\t')
@@ -24,79 +26,73 @@ def save_to_file(filename, projects):
                 "Name": p.name,
                 "Start Date": p.start_date.strftime("%d/%m/%Y"),
                 "Priority": p.priority,
-                "Cost Estimate": f"{p.cost:.2f}",
-                "Completion Percentage": p.percent
+                "Cost Estimate": f"{p.cost_estimate:.2f}",
+                "Completion Percentage": p.completion
             })
 
 def display_projects(projects):
     incomplete = sorted([p for p in projects if not p.is_complete()])
     complete = sorted([p for p in projects if p.is_complete()])
-    print("Incomplete:")
+    print("Incomplete projects:")
     for p in incomplete:
-        print("  ", p)
-    print("Complete:")
+        print(f"  {p}")
+    print("Completed projects:")
     for p in complete:
-        print("  ", p)
+        print(f"  {p}")
 
-def filter_projects(projects, date_str):
-    date = datetime.strptime(date_str, "%d/%m/%Y").date()
-    filtered = [p for p in projects if p.started_after(date)]
-    for p in sorted(filtered, key=lambda p: p.start_date):
+def filter_projects(projects):
+    date_str = input("Show projects that start after date (dd/mm/yyyy): ")
+    date_obj = datetime.strptime(date_str, "%d/%m/%Y").date()
+    filtered = sorted([p for p in projects if p.started_after(date_obj)], key=lambda p: p.start_date)
+    for p in filtered:
         print(p)
 
 def add_project():
     name = input("Name: ")
-    start = input("Start Date (dd/mm/yyyy): ")
+    start_date = input("Start date (dd/mm/yyyy): ")
     priority = input("Priority: ")
-    cost = input("Cost estimate: $")
-    percent = input("Percent complete: ")
-    return Project(name, start, priority, cost, percent)
+    cost = input("Cost estimate: ")
+    completion = input("Percent complete: ")
+    return Project(name, start_date, priority, cost, completion)
 
 def update_project(projects):
     for i, p in enumerate(projects):
-        print(f"{i}: {p}")
-    idx = int(input("Select project index: "))
-    p = projects[idx]
-    new_percent = input("New percent (leave blank to keep): ")
-    new_priority = input("New priority (leave blank to keep): ")
-    if new_percent:
-        p.percent = int(new_percent)
+        print(f"{i} {p}")
+    choice = int(input("Project choice: "))
+    project = projects[choice]
+    new_completion = input("New % completion (leave blank to keep current): ")
+    new_priority = input("New priority (leave blank to keep current): ")
+    if new_completion:
+        project.completion = int(new_completion)
     if new_priority:
-        p.priority = int(new_priority)
+        project.priority = int(new_priority)
 
-def menu_loop():
-    filename = "projects.txt"
-    projects = load_from_file(filename)
-    print(f"Loaded {len(projects)} projects from {filename}")
+def main():
+    projects = load_projects(FILENAME)
+    menu = "\n(L)oad  (S)ave  (D)isplay  (F)ilter  (A)dd  (U)pdate  (Q)uit\n>>> "
+    choice = input(menu).lower()
 
-    options = {
-        'l': lambda: load_from_file(input("Load filename: ")),
-        's': lambda: save_to_file(input("Save filename: "), projects),
-        'd': lambda: display_projects(projects),
-        'f': lambda: filter_projects(projects, input("After date (dd/mm/yyyy): ")),
-        'a': lambda: projects.append(add_project()),
-        'u': lambda: update_project(projects),
-    }
-
-    def get_choice():
-        prompt = "\n(L)oad, (S)ave, (D)isplay, (F)ilter, (A)dd, (U)pdate, (Q)uit: "
-        choice = input(prompt).lower()
-        return choice if choice in options or choice == 'q' else None
-
-    choice = get_choice()
     while choice != 'q':
-        if choice:
-            action = options.get(choice)
-            result = action()
-            if choice == 'l':
-                projects[:] = result  # replace list content
+        if choice == 'l':
+            file = input("Filename: ")
+            projects = load_projects(file)
+        elif choice == 's':
+            file = input("Save as: ")
+            save_projects(file, projects)
+        elif choice == 'd':
+            display_projects(projects)
+        elif choice == 'f':
+            filter_projects(projects)
+        elif choice == 'a':
+            projects.append(add_project())
+        elif choice == 'u':
+            update_project(projects)
         else:
             print("Invalid choice.")
-        choice = get_choice()
+        choice = input(menu).lower()
 
-    if input("Save on exit? (y/n): ").lower().startswith('y'):
-        save_to_file(filename, projects)
-    print("Goodbye!")
+    save_projects(FILENAME, projects)
+    print("Projects saved. Goodbye!")
 
 if __name__ == "__main__":
-    menu_loop()
+    main()

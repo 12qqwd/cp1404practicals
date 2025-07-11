@@ -1,5 +1,3 @@
-"""Represent a programming language."""
-
 class ProgrammingLanguage:
     def __init__(self, name, typing, reflection, year, pointer_arithmetic=False):
         self.name = name

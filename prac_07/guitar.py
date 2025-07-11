@@ -1,16 +1,14 @@
-"""Guitar class with vintage check."""
-
 class Guitar:
     def __init__(self, name, year, cost):
         self.name = name
         self.year = year
         self.cost = cost
 
-    def age(self, current_year):
+    def get_age(self, current_year):
         return current_year - self.year
 
     def is_vintage(self, current_year):
-        return self.age(current_year) >= 50
+        return self.get_age(current_year) >= 50
 
     def __lt__(self, other):
         return self.year < other.year

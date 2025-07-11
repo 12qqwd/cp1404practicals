@@ -1,5 +1,3 @@
-"""Manage guitars: load, add, sort, save, display."""
-
 import csv
 from guitar import Guitar
 
@@ -11,7 +9,7 @@ def load_guitars(filename):
             for name, year, cost in reader:
                 guitars.append(Guitar(name, int(year), float(cost)))
     except FileNotFoundError:
-        print(f"Warning: '{filename}' not found. Starting empty.")
+        print(f"'{filename}' not found. Starting with empty list.")
     return guitars
 
 def save_guitars(filename, guitars):
@@ -22,35 +20,36 @@ def save_guitars(filename, guitars):
 
 def display_guitars(guitars, current_year):
     for i, g in enumerate(guitars, 1):
-        vintage_mark = " (vintage)" if g.is_vintage(current_year) else ""
-        print(f"{i}. {g}{vintage_mark}")
+        vintage_label = " (vintage)" if g.is_vintage(current_year) else ""
+        print(f"{i}. {g}{vintage_label}")
 
-def get_user_guitars():
+def get_new_guitars():
     guitars = []
-    print("Enter new guitars (leave name blank to stop):")
-    while True:
-        name = input("Name: ")
-        if not name:
-            break
+    name = input("Name: ")
+    while name:
         year = int(input("Year: "))
         cost = float(input("Cost: $"))
         guitars.append(Guitar(name, year, cost))
+        name = input("Name: ")
     return guitars
 
-def manage_guitars():
+def main():
     filename = "guitars.csv"
     current_year = 2025
     guitars = load_guitars(filename)
-    print("Current guitars:")
+    print("These are your guitars:")
     display_guitars(guitars, current_year)
 
-    new_list = get_user_guitars()
-    guitars.extend(new_list)
+    print("\nEnter new guitars:")
+    new_guitars = get_new_guitars()
+    guitars.extend(new_guitars)
     guitars.sort()
 
-    print("\nSorted guitars:")
+    print("\nUpdated guitar list:")
     display_guitars(guitars, current_year)
+
     save_guitars(filename, guitars)
 
 if __name__ == "__main__":
-    manage_guitars()
+    main()
+
