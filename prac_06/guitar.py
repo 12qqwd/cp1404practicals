@@ -1,7 +1,7 @@
 class Guitar:
 
 
-def __init__(self, name="", year=0, cost=0):
+ def __init__(self, name="", year=0, cost=0):
     """Initialize, set default parameters"""
     self.name = name
     self.year = year
