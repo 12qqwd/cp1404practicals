@@ -16,7 +16,7 @@ def load_languages(filename):
     return languages
 
 def main():
-    languages = load_languages("languages.csv")
+    languages = load_languages("../../../OneDrive/Desktop/languages.csv")
     for lang in languages:
         print(lang)
 
